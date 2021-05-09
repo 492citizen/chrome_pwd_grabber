@@ -45,6 +45,7 @@ int main(void){
  */
 char *get_db_path(){
 
+
 	char *db_path_chromium = "~/.config/chromium/Default/Login Data";
 	char *db_path_chrome = "~/.config/google-chrome/Default/Login Data";
 
