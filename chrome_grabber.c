@@ -3,11 +3,23 @@
 #include <unistd.h>
 
 
-char *get_db_path();
+char check_file_exists(char *file_path);
+
+char *db_path_chromium = "/home/me/.config/chromium/Default/Login Data";
+char *db_path_chrome = "/home/me/testfile"; //".config/google-chrome/Default/Login Data";
+
 
 FILE *out_file;
 
 int main(void){
+	
+	printf("Checking installed browsers...\n");
+	if(check_file_exists(db_path_chromium)){
+		printf("Chromium is installed\n");
+	}
+	if(check_file_exists(db_path_chrome)){
+		printf("Chrome is installed\n");
+	}
 
 	// get version (only used to verify that sqlite3 was included correctly)
 	printf("%s\n", sqlite3_libversion());
@@ -32,9 +44,6 @@ int main(void){
 	status = sqlite3_prepare_v2(db, "SELECT username_value FROM logins;", -1, &res, 0); // 2nd parameter is the statement
 	status = sqlite3_prepare_v2(db, "SELECT password_value FROM logins;", -1, &res, 0); // 2nd parameter is the statement
 
-	char *db_path = get_db_path();
-	printf("%s\n", db_path);
-
 	return 0;
 
 }
@@ -42,18 +51,16 @@ int main(void){
 /*
  *Get database path (for chrome / chromium / brave)
  */
-char *get_db_path(){
-
-
-	char *db_path_chromium = "~/.config/chromium/Default/Login Data";
-	char *db_path_chrome = "~/.config/google-chrome/Default/Login Data";
-
-	if ( access(db_path_chrome, F_OK) == 0 ) { // chrome is installed
-		return db_path_chrome;
+char check_file_exists(char *file_path){
+	printf("Checking File... ");
+	printf("Checking database: %s\n", *file_path);
+	FILE *file;
+	if (file = fopen(*file_path, "r")){ // file exists
+		fclose(file);
+		return 1;
 	}
-	else if( access(db_path_chromium, F_OK) == 0 ) { // chromium is installed
-		return db_path_chromium;
-	}
-
+	// file doesn't exist
+	perror("Error");
+	printf("Database does not exist.\n");
 	return 0;
 }
