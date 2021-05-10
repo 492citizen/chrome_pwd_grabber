@@ -5,8 +5,8 @@
 
 char check_file_exists(char *file_path);
 
-char *db_path_chromium = "/home/me/.config/chromium/Default/Login Data";
-char *db_path_chrome = "/home/me/testfile"; //".config/google-chrome/Default/Login Data";
+char db_path_chromium[] = "/home/me/.config/chromium/Default/Login Data";
+char db_path_chrome[] = "/home/me/.config/google-chrome/Default/Login Data";
 
 
 FILE *out_file;
@@ -14,10 +14,10 @@ FILE *out_file;
 int main(void){
 	
 	printf("Checking installed browsers...\n");
-	if(check_file_exists(db_path_chromium)){
+	if(check_file_exists(&db_path_chromium)){
 		printf("Chromium is installed\n");
 	}
-	if(check_file_exists(db_path_chrome)){
+	if(check_file_exists(&db_path_chrome)){
 		printf("Chrome is installed\n");
 	}
 
@@ -52,15 +52,11 @@ int main(void){
  *Get database path (for chrome / chromium / brave)
  */
 char check_file_exists(char *file_path){
-	printf("Checking File... ");
-	printf("Checking database: %s\n", *file_path);
 	FILE *file;
-	if (file = fopen(*file_path, "r")){ // file exists
+	if (file = fopen(file_path, "r")){ // file exists
 		fclose(file);
 		return 1;
 	}
 	// file doesn't exist
-	perror("Error");
-	printf("Database does not exist.\n");
 	return 0;
 }
